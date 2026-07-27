@@ -1,0 +1,10 @@
+{
+  "name": "@axel-agents/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "axel-agents": "./bin/axel-agents.js"
+  },
+  "files": ["bin/", "src/"],
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,19 @@
+name: axel-agents
+version: 1.0.0
+packages:
+  core:
+    source: packages/core
+  laravel:
+    source: packages/laravel
+    depends:
+      - core
+  react:
+    source: packages/react
+    depends:
+      - core
+  go:
+    source: packages/go
+    depends:
+      - core
+  adapters:
+    source: packages/adapters

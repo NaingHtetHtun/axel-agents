@@ -1,0 +1,8 @@
+
+# Axel Engineering OS: local sensitive memory
+.ai/memory/secrets.md
+.ai/memory/credentials.md
+.ai/memory/project-secrets.md
+.ai/memory/env.md
+.ai/memory/*.local.md
+.ai/memory/private/

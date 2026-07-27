@@ -1,0 +1,17 @@
+# Environment and secret material
+.env
+.env.*
+!.env.example
+
+# Dependency and generated runtime directories
+node_modules/
+vendor/
+storage/logs/
+
+# Local Engineering OS memory — durable shared facts remain committed.
+.ai/memory/secrets.md
+.ai/memory/credentials.md
+.ai/memory/project-secrets.md
+.ai/memory/env.md
+.ai/memory/*.local.md
+.ai/memory/private/

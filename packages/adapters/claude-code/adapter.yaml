@@ -1,0 +1,4 @@
+name: claude-code
+target_dir: .claude/axel-agents
+config: config.yaml
+description: Claude Code adapter with isolated Axel Engineering OS assets.

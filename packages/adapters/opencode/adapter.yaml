@@ -1,0 +1,4 @@
+name: opencode
+target_dir: .ai
+config: config.yaml
+description: Native Axel Engineering OS layout for OpenCode.

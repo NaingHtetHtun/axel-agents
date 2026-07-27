@@ -1,0 +1,4 @@
+name: codex
+target_dir: .codex/axel-agents
+config: config.yaml
+description: Codex adapter with isolated Axel Engineering OS assets.

@@ -1,0 +1,4 @@
+name: cursor
+target_dir: .cursor/rules/axel-agents
+config: config.yaml
+description: Cursor adapter with portable rules-directory placement.
