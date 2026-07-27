@@ -1,0 +1,7 @@
+# Keep shared engineering facts versioned; never commit local sensitive memory.
+secrets.md
+credentials.md
+project-secrets.md
+env.md
+*.local.md
+private/
