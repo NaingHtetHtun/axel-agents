@@ -21,7 +21,12 @@
     "doctor": "node ./packages/cli/bin/axel-agents.js doctor"
   },
   "keywords": [
-    "ai", "agents", "skills", "engineering-os", "opencode", "codex"
+    "ai",
+    "agents",
+    "skills",
+    "engineering-os",
+    "opencode",
+    "codex"
   ],
   "license": "MIT"
 }
