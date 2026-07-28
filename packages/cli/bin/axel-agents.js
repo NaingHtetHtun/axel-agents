@@ -2,7 +2,7 @@
 
 import { install, addExtension, doctor, update } from '../src/installer.js';
 import { createInterface } from 'node:readline/promises';
-import { runEngineeringCommand } from '../src/commands.js';
+import { runEngineeringCommand, onboard, context, list, version } from '../src/commands.js';
 
 const [command = 'help', ...args] = process.argv.slice(2);
 const target = process.env.AXEL_TARGET ?? process.cwd();
@@ -14,6 +14,10 @@ Usage:
   agents add <laravel|react|go>
   agents update
   agents doctor
+  agents onboard
+  agents context
+  agents list
+  agents version
   agents <new-feature|fix-bug|review|optimize|deploy> [task] [--adapter opencode]
 `;
 
@@ -35,6 +39,18 @@ try {
       break;
     case 'doctor':
       await doctor({ target, adapter: valueAfter(args, '--adapter') });
+      break;
+    case 'onboard':
+      await onboard({ target });
+      break;
+    case 'context':
+      await context({ target, adapter: valueAfter(args, '--adapter') });
+      break;
+    case 'list':
+      await list({ target, adapter: valueAfter(args, '--adapter') });
+      break;
+    case 'version':
+      await version({ target, adapter: valueAfter(args, '--adapter') });
       break;
     case 'help':
     case '--help':

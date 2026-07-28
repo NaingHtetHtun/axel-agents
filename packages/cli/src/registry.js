@@ -7,13 +7,6 @@ const root = path.resolve(
 	"../../..",
 );
 
-console.log({
-	file: fileURLToPath(import.meta.url),
-	dir: path.dirname(fileURLToPath(import.meta.url)),
-	root,
-	registry: path.join(root, "registry.yaml"),
-});
-
 export async function loadRegistry() {
 	const content = await readFile(path.join(root, "registry.yaml"), "utf8");
 	const packages = {};
