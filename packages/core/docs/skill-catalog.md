@@ -20,5 +20,6 @@
 | frontend / react | components, hooks, state-management, routing, testing, performance |
 | backend / go | project-structure, http-services, concurrency, data-access, testing |
 | backend / nestjs | controllers, modules, services, middleware, guards, pipes, interceptors, dependency-injection, testing, deployment |
+| backend / python | project-structure, http-services, data-modeling, testing, deployment |
 
-The remaining category directories are deliberately reserved for future extensions such as Python. Add a skill only when it owns a distinct decision or workflow; do not create aliases that duplicate an existing responsibility.
+The remaining category directories are deliberately reserved for future extensions. Add a skill only when it owns a distinct decision or workflow; do not create aliases that duplicate an existing responsibility.

@@ -19,5 +19,9 @@ packages:
     source: packages/nestjs
     depends:
       - core
+  python:
+    source: packages/python
+    depends:
+      - core
   adapters:
     source: packages/adapters

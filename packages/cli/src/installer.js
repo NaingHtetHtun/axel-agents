@@ -8,7 +8,8 @@ const profiles = {
   'laravel-api': ['laravel'],
   'react-app': ['react'],
   'go-service': ['go'],
-  'nest-app': ['nestjs']
+  'nest-app': ['nestjs'],
+  'python-app': ['python']
 };
 
 export async function install({ target, profile, stacks, adapter = 'opencode', force = false }) {
