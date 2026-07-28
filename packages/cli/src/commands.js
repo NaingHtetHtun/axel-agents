@@ -2,6 +2,7 @@ import { access, readFile, readdir, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parse as parseYaml } from 'yaml';
 import { loadAdapter } from './registry.js';
 
 const engineeringCommands = new Set(['new-feature', 'fix-bug', 'review', 'optimize', 'deploy']);
@@ -194,15 +195,12 @@ async function detectReact(target) {
 async function readConfig(osDir) {
   try {
     const content = await readFile(path.join(osDir, 'config.yaml'), 'utf8');
-    const adapterMatch = content.match(/^adapter:\s*(.+)$/m);
-    const extensionsMatch = content.match(/^extensions:\n((?:  - .*\n?)*)/m);
-    const memoryMatch = content.match(/^memory:\n\s+enabled:\s*(true|false)/m);
-    const checksMatch = content.match(/^checks:\n\s+before_commit:\s*(true|false)/m);
+    const data = parseYaml(content);
     return {
-      adapter: adapterMatch?.[1] || 'opencode',
-      extensions: (extensionsMatch?.[1].match(/^  - (.+)$/gm) ?? []).map(l => l.slice(4)).filter(n => n !== 'core'),
-      memory: memoryMatch?.[1] !== 'false',
-      checks: checksMatch?.[1] !== 'false',
+      adapter: data.adapter ?? 'opencode',
+      extensions: (data.extensions ?? []).filter(n => n !== 'core'),
+      memory: data.memory?.enabled ?? true,
+      checks: data.checks?.before_commit ?? true,
     };
   } catch { return { adapter: 'opencode', extensions: [], memory: true, checks: true }; }
 }
@@ -299,10 +297,9 @@ export async function version({ target, adapter = 'opencode' }) {
 
   let installedVersion = 'unknown';
   try {
-    const vPath = path.join(osDir, 'version.yaml');
-    const content = await readFile(vPath, 'utf8');
-    const match = content.match(/^version:\s*(.+)$/m);
-    if (match) installedVersion = match[1].trim();
+    const content = await readFile(path.join(osDir, 'version.yaml'), 'utf8');
+    const data = parseYaml(content);
+    installedVersion = data.version ?? 'unknown';
   } catch {}
 
   console.log('Axel Engineering OS');

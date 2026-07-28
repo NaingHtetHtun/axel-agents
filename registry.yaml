@@ -15,5 +15,9 @@ packages:
     source: packages/go
     depends:
       - core
+  nestjs:
+    source: packages/nestjs
+    depends:
+      - core
   adapters:
     source: packages/adapters

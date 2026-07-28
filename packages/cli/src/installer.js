@@ -1,14 +1,15 @@
 import { cp, access, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
+import { stringify as stringifyYaml, parse as parseYaml } from 'yaml';
 import { loadAdapter, loadRegistry } from './registry.js';
 
 const profiles = {
   'laravel-api': ['laravel'],
   'react-app': ['react'],
-  'go-service': ['go']
+  'go-service': ['go'],
+  'nest-app': ['nestjs']
 };
-const adapterNames = new Set(['opencode', 'claude-code', 'cursor', 'codex']);
 
 export async function install({ target, profile, stacks, adapter = 'opencode', force = false }) {
   const aiDir = await installationDir(target, adapter);
@@ -16,7 +17,7 @@ export async function install({ target, profile, stacks, adapter = 'opencode', f
     throw new Error(`${aiDir} already exists. Use --force only after reviewing its contents.`);
   }
   if (force) await rm(aiDir, { recursive: true, force: true });
-  const selected = resolveExtensions(profile, stacks);
+  const selected = await resolveExtensions(profile, stacks);
   console.log('Installing Axel Engineering OS');
   await copyCore(aiDir);
   for (const extension of selected) await copyExtension(aiDir, extension);
@@ -25,7 +26,8 @@ export async function install({ target, profile, stacks, adapter = 'opencode', f
 }
 
 export async function addExtension({ target, extension, adapter = 'opencode' }) {
-  assertExtension(extension);
+  const available = await availableExtensions();
+  assertExtension(extension, available);
   const aiDir = await installationDir(target, adapter);
   if (!(await exists(aiDir))) throw new Error('No .ai installation found. Run agents init first.');
   await copyExtension(aiDir, extension);
@@ -75,34 +77,64 @@ async function copyCore(aiDir, { preserveMemory = false } = {}) {
 }
 
 async function copyExtension(aiDir, extension) {
-  assertExtension(extension);
   const registry = await loadRegistry();
+  const available = Object.keys(registry.packages).filter(n => n !== 'core' && n !== 'adapters');
+  assertExtension(extension, available);
   const item = registry.packages[extension];
   await cp(path.join(registry.root, item.source, 'skills'), path.join(aiDir, 'skills'), { recursive: true, force: true });
 }
 
 async function writeConfig(aiDir, extensions, adapter) {
-  const config = `name: axel-os\nversion: 1.0.0\nadapter: ${adapter}\nagent_system: enabled\nskill_loader:\n  auto_detect: true\n  minimum_sufficient_set: true\nmemory:\n  enabled: true\nchecks:\n  before_commit: true\n  evidence_first: true\nextensions:\n${extensions.map((name) => `  - ${name}`).join('\n') || '  - core'}\n`;
-  await writeFile(path.join(aiDir, 'config.yaml'), config);
+  const config = {
+    name: 'axel-os',
+    version: '1.0.0',
+    adapter,
+    agent_system: 'enabled',
+    skill_loader: {
+      auto_detect: true,
+      minimum_sufficient_set: true
+    },
+    memory: { enabled: true },
+    checks: {
+      before_commit: true,
+      evidence_first: true
+    },
+    extensions: extensions.length ? extensions : ['core']
+  };
+  await writeFile(path.join(aiDir, 'config.yaml'), stringifyYaml(config));
 }
 
 async function readConfig(aiDir) {
-  const content = await readFile(path.join(aiDir, 'config.yaml'), 'utf8');
-  const match = content.match(/^extensions:\n((?:  - .*\n?)*)/m);
-  return { extensions: (match?.[1].match(/^  - (.+)$/gm) ?? []).map((line) => line.slice(4)).filter((name) => name !== 'core') };
+  try {
+    const content = await readFile(path.join(aiDir, 'config.yaml'), 'utf8');
+    const data = parseYaml(content);
+    return { extensions: (data.extensions ?? []).filter(name => name !== 'core') };
+  } catch {
+    return { extensions: [] };
+  }
 }
 
-function resolveExtensions(profile, stacks) {
-  const fromProfile = profile ? profiles[profile] : [];
-  if (profile && !fromProfile) throw new Error(`Unknown project type: ${profile}`);
-  const fromStacks = stacks ? stacks.split(',').map((value) => value.trim()).filter(Boolean) : [];
+async function availableExtensions() {
+  const registry = await loadRegistry();
+  return Object.keys(registry.packages).filter(n => n !== 'core' && n !== 'adapters');
+}
+
+async function resolveExtensions(profile, stacks) {
+  const available = await availableExtensions();
+  const fromProfile = profile ? profiles[profile] ?? [] : [];
+  if (profile && !profiles[profile]) {
+    throw new Error(`Unknown project type: ${profile}. Use --stack with extension names instead.`);
+  }
+  const fromStacks = stacks ? stacks.split(',').map(v => v.trim()).filter(Boolean) : [];
   const selected = [...new Set([...fromProfile, ...fromStacks])];
-  selected.forEach(assertExtension);
+  selected.forEach(ext => assertExtension(ext, available));
   return selected;
 }
 
-function assertExtension(extension) {
-  if (!['laravel', 'react', 'go'].includes(extension)) throw new Error('Unknown extension: ' + extension + '. Available: laravel, react, go');
+function assertExtension(extension, available) {
+  if (!available.includes(extension)) {
+    throw new Error(`Unknown extension: ${extension}. Available: ${available.join(', ')}`);
+  }
 }
 
 async function exists(target) {
@@ -136,7 +168,6 @@ async function installIgnoreRules(aiDir, preserveMemory) {
 }
 
 async function installationDir(target, adapterName) {
-  if (!adapterNames.has(adapterName)) throw new Error(`Unknown adapter: ${adapterName}. Available: ${[...adapterNames].join(', ')}`);
   const adapter = await loadAdapter(adapterName);
   return path.join(target, adapter.target_dir);
 }

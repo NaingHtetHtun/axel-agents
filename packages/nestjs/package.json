@@ -1,0 +1,5 @@
+{
+  "name": "@axel-agents/nestjs",
+  "version": "1.0.0",
+  "description": "NestJS extension pack for Axel Engineering OS"
+}

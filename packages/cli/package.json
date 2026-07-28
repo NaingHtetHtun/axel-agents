@@ -1,18 +1,19 @@
 {
   "name": "@nainghtethtun/axel-agents",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "bin": {
     "axel-agents": "./bin/axel-agents.js"
   },
   "files": [
     "bin/",
-    "src/"
+    "src/",
+    "resources/"
   ],
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "@nainghtethtun/axel-agents": "^1.0.0"
+    "yaml": "^2.7.0"
   }
 }

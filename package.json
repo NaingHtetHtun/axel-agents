@@ -7,16 +7,13 @@
 		"axel-agents": "./packages/cli/bin/axel-agents.js"
 	},
 	"files": [
-		"packages/cli/",
-		"packages/",
-		"registry.yaml",
-		"README.md",
-		"LICENSE"
+		"packages/cli/"
 	],
 	"engines": {
 		"node": ">=18"
 	},
 	"scripts": {
+		"build": "node scripts/build.js",
 		"test": "node --test",
 		"doctor": "node ./packages/cli/bin/axel-agents.js doctor"
 	},
@@ -28,5 +25,8 @@
 		"opencode",
 		"codex"
 	],
-	"license": "MIT"
+	"license": "MIT",
+	"devDependencies": {
+		"yaml": "^2.9.0"
+	}
 }

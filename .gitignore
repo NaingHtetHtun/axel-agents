@@ -8,6 +8,9 @@ node_modules/
 vendor/
 storage/logs/
 
+# Build output
+packages/cli/resources/
+
 # Local Engineering OS memory — durable shared facts remain committed.
 .ai/memory/secrets.md
 .ai/memory/credentials.md
